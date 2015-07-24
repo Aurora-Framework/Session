@@ -1,25 +1,10 @@
 <?php
 
-/**
- * Aurora - Framework
- *
- * Aurora is fast, simple, extensible Framework
- *
- * PHP version 6
- *
- * @category   Framework
- * @package    Aurora
- * @author     VeeeneX <veeenex@gmail.com>
- * @copyright  2015 Caroon
- * @license    MIT
- * @version    1.0
- * @link       http://caroon.com/Aurora
- *
- */
-
 namespace Aurora\Session\Handler;
 
-class File implements \SessionHandlerInterface
+use SessionHandlerInterface;
+
+class File implements SessionHandlerInterface
 {
    private $savePath;
 
@@ -41,7 +26,9 @@ class File implements \SessionHandlerInterface
    public function read($id)
    {
       $data = '';
-      if(file_exists($this->savePath . '/' . $id) && is_readable($this->savePath . '/' . $id)) {
+      if (file_exists($this->savePath . '/' . $id)
+         && is_readable($this->savePath . '/' . $id)
+      ) {
          $data = file_get_contents($this->savePath . '/' . $id);
       }
 
@@ -50,7 +37,7 @@ class File implements \SessionHandlerInterface
 
    public function write($id, $data)
    {
-      if(is_writable($this->savePath)) {
+      if (is_writable($this->savePath)) {
          return file_put_contents($this->savePath . '/' . $id, $data) === false ? false : true;
       }
 
@@ -59,7 +46,9 @@ class File implements \SessionHandlerInterface
 
    public function destroy($id)
    {
-      if(file_exists($this->savePath . '/' . $id) && is_writable($this->savePath . '/' . $id)) {
+      if (file_exists($this->savePath . '/' . $id)
+         && is_writable($this->savePath . '/' . $id)
+      ) {
          return unlink($this->savePath . '/' . $id);
       }
 
@@ -70,9 +59,11 @@ class File implements \SessionHandlerInterface
    {
       $files = glob($this->savePath . '/*');
 
-      if(is_array($files)) {
-         foreach($files as $file) {
-            if((filemtime($file) + $maxLifetime) < time() && is_writable($file)) {
+      if (is_array($files)) {
+         foreach ($files as $file) {
+            if ((filemtime($file) + $maxLifetime) < time()
+               && is_writable($file)
+            ) {
                unlink($file);
             }
          }

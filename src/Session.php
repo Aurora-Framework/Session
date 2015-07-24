@@ -1,23 +1,10 @@
 <?php
 
-/**
- * Aurora - Framework
- *
- * Aurora is fast, simple, extensible Framework
- *
- * PHP version 6
- *
- * @category   Framework
- * @package    Aurora
- * @author     VeeeneX <veeenex@gmail.com>
- * @copyright  2015 Caroon
- * @license    MIT
- * @version    1.0
- * @link       http://caroon.com/Aurora
- *
- */
-
 namespace Aurora;
+
+use Aurora\Session\Exception\SessionAlreadyExistsException;
+use SessionHandlerInterface;
+use Exception;
 
 class Session
 {
@@ -35,12 +22,12 @@ class Session
     * @todo Fail back for session configuration
     */
    public function __construct(
-		\SessionHandlerInterface $Handler = null,
+		SessionHandlerInterface $Handler = null,
 		$config
 	) {
-      $this->config = $config;
+      $this->config = (array) $config;
 
-      if($Handler !== null) {
+      if ($Handler !== null) {
          session_set_save_handler($Handler, true);
       }
 
@@ -55,17 +42,15 @@ class Session
       register_shutdown_function([$this, "__destruct"]);
    }
 
-   /**
-    * start Start the session or thow an error
-    * @return null Should be nicer in future
-    */
 	public function start()
 	{
       try {
          session_start();
-      } catch (\Exeption $Exeption){
-         throw new \Exeption("Session was already created");
+      } catch (Exeption $Exeption){
+         throw new SessionAlreadyExistsException("Session was already created");
       }
+
+      return $this;
    }
 
    public function destroy()
@@ -86,11 +71,15 @@ class Session
 	public function clear()
    {
       $_SESSION = [];
+
+      return $this;
    }
 
 	public function reset()
    {
       $_SESSION = [];
+
+      return $this;
    }
 
 	public function get($key, $default = null)
@@ -106,16 +95,22 @@ class Session
 	public function delete($key)
    {
       unset($_SESSION[$key]);
+
+      return $this;
    }
 
    public function remove($key)
    {
       unset($_SESSION[$key]);
+
+      return $this;
    }
 
 	public function set($key, $value)
    {
       $_SESSION[$key] = $value;
+
+      return $this;
    }
 
 	public function __destruct()
