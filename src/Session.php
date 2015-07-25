@@ -14,17 +14,25 @@ class Session
     */
    private $config;
 
+   private $default = [
+      "lifetime" => 86400,
+      "path" => "/",
+      "domain" => null,
+      "secure" => true,
+      "httpOnly" => true
+   ];
+
    /**
     * __construct Constructor
     * @param \SessionHandlerInterface $Handler Handler for session
     * @param array $config Configuration for session
-    *
-    * @todo Fail back for session configuration
     */
    public function __construct(
 		SessionHandlerInterface $Handler = null,
 		$config
 	) {
+      $config = array_merge($this->default, $config);
+
       $this->config = (array) $config;
 
       if ($Handler !== null) {
@@ -36,7 +44,7 @@ class Session
          $this->config["path"],
          $this->config["domain"],
          $this->config["secure"],
-         $this->config["httponly"]
+         $this->config["httpOnly"]
       );
       session_name($this->config['name']);
       register_shutdown_function([$this, "__destruct"]);
